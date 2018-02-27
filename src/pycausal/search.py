@@ -1878,41 +1878,20 @@ class ling():
         if dataType == 0:
             if numBootstrap < 1:
                 tetradData = pycausal.loadContinuousData(df)
-                indTest = javabridge.JClassWrapper(
-                    'edu.cmu.tetrad.search.IndTestFisherZ')(tetradData, alpha)
+
             else:
                 tetradData = pycausal.loadContinuousData(
                     df, outputDataset=True)
-                indTest = javabridge.JClassWrapper(
-                    'edu.cmu.tetrad.algcomparison.independence.FisherZ')()
-        # Discrete
-        elif dataType == 1:
-            tetradData = pycausal.loadDiscreteData(df)
-            if numBootstrap < 1:
-                indTest = javabridge.JClassWrapper(
-                    'edu.cmu.tetrad.search.IndTestChiSquare')(tetradData, alpha)
-            else:
-                indTest = javabridge.JClassWrapper(
-                    'edu.cmu.tetrad.algcomparison.independence.ChiSquare')()
-        # Mixed
-        else:
-            tetradData = pycausal.loadMixedData(df, numCategoriesToDiscretize)
-            if numBootstrap < 1:
-                indTest = javabridge.JClassWrapper(
-                    'edu.cmu.tetrad.search.IndTestConditionalGaussianLRT')(tetradData, alpha, False)
-            else:
-                indTest = javabridge.JClassWrapper(
-                    'edu.cmu.tetrad.algcomparison.independence.ConditionalGaussianLRT')()
 
         ling = None
 
         if numBootstrap < 1:
             ling = javabridge.JClassWrapper(
-                'edu.cmu.tetrad.search.Ling')(indTest)
+                'edu.cmu.tetrad.search.Ling')(tetradData)
             ling.setDepth(depth)
         else:
             algorithm = javabridge.JClassWrapper(
-                'edu.cmu.tetrad.algcomparison.algorithm.oracle.pag.Ling')(indTest)
+                'edu.cmu.tetrad.algcomparison.algorithm.oracle.pag.Ling')(tetradData)
 
             parameters = javabridge.JClassWrapper(
                 'edu.cmu.tetrad.util.Parameters')()
