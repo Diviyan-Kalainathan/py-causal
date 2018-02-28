@@ -1878,6 +1878,7 @@ class ling():
         tetradData = pycausal.loadContinuousData(df)
         print(type(tetradData))
         print(tetradData)
+        print(javabridge.run_script("tetradData.getClass()"))
         ling = None
 
         ling = javabridge.JClassWrapper(
