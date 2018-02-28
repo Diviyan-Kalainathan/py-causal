@@ -1,7 +1,7 @@
 '''
 Created on Feb 17, 2016
 
-@author: Chirayu Wongchokprasitti, PhD 
+@author: Chirayu Wongchokprasitti, PhD
 @email: chw20@pitt.edu
 '''
 
@@ -1870,44 +1870,19 @@ class ling():
     nodes = []
     edges = []
 
-    def __init__(self, df, dataType=0, numCategoriesToDiscretize=4, depth=3, alpha=0.05, priorKnowledge=None, numBootstrap=-1, ensembleMethod='Highest'):
+    def __init__(self, df):
         tetradData = None
         indTest = None
 
         # Continuous
-        if dataType == 0:
-            if numBootstrap < 1:
-                tetradData = pycausal.loadContinuousData(df)
-
-            else:
-                tetradData = pycausal.loadContinuousData(
-                    df, outputDataset=True)
-
+        tetradData = pycausal.loadContinuousData(df)
+        print(type(tetradData))
+        print(tetradData)
         ling = None
 
-        if numBootstrap < 1:
-            ling = javabridge.JClassWrapper(
+        ling = javabridge.JClassWrapper(
                 'edu.cmu.tetrad.search.Ling')(tetradData)
-            ling.setDepth(depth)
-        else:
-            algorithm = javabridge.JClassWrapper(
-                'edu.cmu.tetrad.algcomparison.algorithm.oracle.pag.Ling')(tetradData)
-
-            parameters = javabridge.JClassWrapper(
-                'edu.cmu.tetrad.util.Parameters')()
-            parameters.set('depth', depth)
-            parameters.set('alpha', alpha)
-
-            ling = javabridge.JClassWrapper('edu.pitt.dbmi.algo.bootstrap.GeneralBootstrapTest')(
-                tetradData, algorithm, numBootstrap)
-            edgeEnsemble = javabridge.get_static_field('edu/pitt/dbmi/algo/bootstrap/BootstrapEdgeEnsemble',
-                                                       ensembleMethod,
-                                                       'Ledu/pitt/dbmi/algo/bootstrap/BootstrapEdgeEnsemble;')
-            ling.setEdgeEnsemble(edgeEnsemble)
-            ling.setParameters(parameters)
-
-        if priorKnowledge is not None:
-            ling.setKnowledge(priorKnowledge)
+        ling.setDepth(depth)
 
         self.tetradGraph = ling.search()
 
